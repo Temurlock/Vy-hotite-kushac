@@ -5,15 +5,15 @@ import BotLogic.util.SomeResponce;
 
 public class Bot {
 
-    DataBase DB = new DataBase();
+    DataBase userStates = new DataBase();
 
 
-    public void getMessage( Sendable messenger,Long chatId, String text) {
+    public void getMessage(Sendable messenger, Long chatId, String text) {
         if (text.isEmpty()) {
             return;
         }
         resolveMessage(
-                new Message( messenger, chatId, text)
+                new Message(messenger, chatId, text)
         );
     }
 
@@ -23,38 +23,30 @@ public class Bot {
 
     private void resolveMessage(Message msg) {
         switch (msg.text) {
-            case "/Start":
-                sendMessage( msg.messenger, msg.id, MainBotStrings.hello());
-                break;
-            case "Хочу кушац":
-                kushac(msg);
-                break;
-            default:
-                resolveStates(msg);
-                break;
+            case "/Start", "/start", "/help" -> sendMessage(msg.messenger, msg.id, MainBotStrings.hello());
+            case "Хочу кушац" -> kushac(msg);
+            default -> resolveStates(msg);
         }
     }
 
     private void kushac(Message msg) {
-        DB.changeState(msg.id, 1);
+        userStates.changeState(msg.id, 1);
         sendMessage(msg.messenger, msg.id, MainBotStrings.kushac());
     }
 
     private void resolveStates(Message msg) {
         switch (
-                DB.getState(msg.id)
+                userStates.getState(msg.id)
         ) {
-            case 0:
-                sendMessage(msg.messenger, msg.id, MainBotStrings.neponel());
-                break;
-            case 1:
+            case 0 -> sendMessage(msg.messenger, msg.id, MainBotStrings.neponel());
+            case 1 -> {
                 var s = SomeResponce.getTextDishes(msg.text);
                 sendMessage(
                         msg.messenger, msg.id,
                         s
                 );
-                DB.changeState(msg.getId(), 0);
-                break;
+                userStates.changeState(msg.getId(), 0);
+            }
         }
     }
 }
@@ -65,7 +57,7 @@ class Message {
     Long id;
     String text;
 
-    public Message( Sendable messenger, Long id , String text) {
+    public Message(Sendable messenger, Long id, String text) {
         this.id = id;
         this.messenger = messenger;
         this.text = text;
@@ -75,15 +67,15 @@ class Message {
         return id;
     }
 
-    public  Sendable getMessenger() {
-        return  messenger;
+    public Sendable getMessenger() {
+        return messenger;
     }
 
     public String getText() {
         return text;
     }
 
-    public  void setText(String text) {
+    public void setText(String text) {
         this.text = text;
     }
 }

@@ -21,8 +21,6 @@ public final class TgBot extends TelegramLongPollingCommandBot
         this.BOT_NAME = botName;
         this.BOT_TOKEN = botToken;
         this.PAPA = papa;
-        //создаём вспомогательный класс для работы с сообщениями, не являющимися командами
-        //register(new StartCommand("start", "Старт"));
     }
 
     private String getUserName(Message msg) {
@@ -49,11 +47,6 @@ public final class TgBot extends TelegramLongPollingCommandBot
         return BOT_NAME;
     }
 
-    /**
-     * Отправка ответа
-     * @param chatId id чата
-     * @param text текст ответа
-     */
     @Override
     public void send(Long chatId, String text) {
         SendMessage answer = new SendMessage();

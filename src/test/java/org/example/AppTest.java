@@ -34,7 +34,7 @@ public class AppTest
 
 
     @Test
-    public void testParseDicshFromMessage() {
+    public void testParseDishFromMessage() {
         var s = SomeResponce.parseDishFromMessage("менюююю японская грузинская грузинская рандомная завтраки");
         assertEquals("yaponskaya-kuhnya", s[0]);
         assertEquals("zavtraki", s[1]);
@@ -44,7 +44,7 @@ public class AppTest
     public void testCheckEdaRuConnection() {
         var flag = true;
         try {
-            var doc = Jsoup.connect("https://eda.ru")
+            Jsoup.connect("https://eda.ru")
                     .userAgent("Mozilla")
                     .get();
         } catch (IOException e) {
@@ -58,7 +58,7 @@ public class AppTest
         var bot = createBot();
         bot.mailBox(new String[]{ "default msg" });
         assertEquals(MainBotStrings.neponel(),
-                bot.Answers.get(0));
+                bot.answers.get(0));
     }
 
 
@@ -66,7 +66,7 @@ public class AppTest
     public void testGenerateChoosingGenreCommandInput() {
         var bot = createBot();
         bot.mailBox(new String[] {"Хочу кушац"});
-        assertEquals(MainBotStrings.kushac(), bot.Answers.get(0));
+        assertEquals(MainBotStrings.kushac(), bot.answers.get(0));
     }
 
     @Test
@@ -74,6 +74,6 @@ public class AppTest
         var bot = createBot();
         bot.mailBox(new String[]{ "/Start" });
 
-        assertEquals(MainBotStrings.hello(), bot.Answers.get(0));
+        assertEquals(MainBotStrings.hello(), bot.answers.get(0));
     }
 }

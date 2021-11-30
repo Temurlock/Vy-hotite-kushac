@@ -7,10 +7,10 @@ import java.util.Scanner;
 
 public class ConsoleBot implements Sendable {
 
-    private Bot Papa;
+    private final Bot PAPA;
 
     public ConsoleBot(Bot bot) {
-        Papa = bot;
+        PAPA = bot;
     }
 
     @Override
@@ -22,7 +22,7 @@ public class ConsoleBot implements Sendable {
         Scanner in = new Scanner(System.in);
         while (true) {
             var t = in.nextLine();
-            Papa.getMessage(this, 0L, t);
+            PAPA.getMessage(this, 0L, t);
         }
     }
 }

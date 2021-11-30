@@ -14,26 +14,30 @@ import java.io.IOException;
 public class SomeResponce {
 
 
-    public static HashMap<String, String> dict_of_kuhnya = new HashMap<>() { {
-        put("китайская", "kitayskaya-kuhnya");
-        put("грузинская", "gruzinskaya-kuhnya");
-        put("итальянская", "italyanskaya-kuhnya");
-        put("русская", "russkaya-kuhnya");
-        put("французская", "francuzskaya-kuhnya");
-        put("японская", "yaponskaya-kuhnya");
-    } };
+    public static HashMap<String, String> dict_of_kuhnya = new HashMap<>() {
+        {
+            put("китайская", "kitayskaya-kuhnya");
+            put("грузинская", "gruzinskaya-kuhnya");
+            put("итальянская", "italyanskaya-kuhnya");
+            put("русская", "russkaya-kuhnya");
+            put("французская", "francuzskaya-kuhnya");
+            put("японская", "yaponskaya-kuhnya");
+        }
+    };
 
-    public static HashMap<String, String> dict_of_vid = new HashMap<>() { {
-        put("завтраки", "zavtraki");
-        put("закуски", "zakuski");
-        put("напитки", "napitki");
-        put("салаты", "salaty");
-        put("супы", "supy");
-    }};
+    public static HashMap<String, String> dict_of_vid = new HashMap<>() {
+        {
+            put("завтраки", "zavtraki");
+            put("закуски", "zakuski");
+            put("напитки", "napitki");
+            put("салаты", "salaty");
+            put("супы", "supy");
+        }
+    };
 
     private static final String mainLink = "https://eda.ru";
 
-    public static String makeLink(String kuhnya, String vid){
+    public static String makeLink(String kuhnya, String vid) {
 
         var link = "https://eda.ru/recepty";
         if (kuhnya != null) {
@@ -68,14 +72,14 @@ public class SomeResponce {
     }
 
     private static List<String> filterLinks(Elements elements) {
-        return elements.stream().map( (el) -> el.attr("href"))
-                .filter( (s) -> s.matches("^.*-\\d{3,6}$") )
-                .map( (el) -> mainLink + el)
+        return elements.stream().map((el) -> el.attr("href"))
+                .filter((s) -> s.matches("^.*-\\d{3,6}$"))
+                .map((el) -> mainLink + el)
                 .distinct()
                 .toList();
     }
 
-    public static String getTextDishes( String text ) {
+    public static String getTextDishes(String text) {
 
         var attr = parseDishFromMessage(text);
         var links = findLinks(
@@ -93,8 +97,8 @@ public class SomeResponce {
         try {
             cuisine = (String) Arrays.stream(text.split(" "))
                     .distinct()
-                    .filter( dict_of_kuhnya::containsKey)
-                    .map( dict_of_kuhnya::get).toArray()[0];
+                    .filter(dict_of_kuhnya::containsKey)
+                    .map(dict_of_kuhnya::get).toArray()[0];
         } catch (IndexOutOfBoundsException e) {
             cuisine = null;
         }
@@ -102,12 +106,12 @@ public class SomeResponce {
         try {
             vid = (String) Arrays.stream(text.split(" "))
                     .distinct()
-                    .filter( dict_of_vid::containsKey)
-                    .map( dict_of_vid::get).toArray()[0];
+                    .filter(dict_of_vid::containsKey)
+                    .map(dict_of_vid::get).toArray()[0];
         } catch (IndexOutOfBoundsException e) {
             vid = null;
         }
 
-        return new String[] { cuisine, vid };
+        return new String[]{cuisine, vid};
     }
 }

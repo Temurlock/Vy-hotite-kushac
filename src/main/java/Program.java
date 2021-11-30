@@ -12,26 +12,24 @@ public class Program {
     static String Token = "";
 
 
-    // много мусора потом почистим
-
-    public static void main (String args[]){
+    public static void main(String args[]) {
 
         var bot = new Bot();
 
         //new ConsoleBot(bot).runDialoge(); - консольный
 
-        //runTg(bot); - телеграмный
+        runTg(bot);
 
 
     }
 
+// TODO: Закинуть в другое место
+    public static void runTg(Bot bot) {
 
-    public static void runTg (Bot bot) {
-
-        TgBot A = new TgBot(Name, Token, bot);
+        TgBot a = new TgBot(Name, Token, bot);
         try {
             TelegramBotsApi botapi = new TelegramBotsApi(DefaultBotSession.class);
-            botapi.registerBot(A);
+            botapi.registerBot(a);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
