@@ -7,20 +7,33 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-public final class TgBot extends TelegramLongPollingCommandBot
-        implements Sendable {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public final class TgBot extends TelegramLongPollingCommandBot implements Sendable {
     private final String BOT_NAME;
     private final String BOT_TOKEN;
-
     private final Bot PAPA;
+    private InlineKeyboardMarkup mainKeyboardMarkup = new InlineKeyboardMarkup();
+    private InlineKeyboardMarkup secondKeyboardMarkup = new InlineKeyboardMarkup();
 
+        //Завтраки, Супы, Напитки, Закуски
     public TgBot(String botName, String botToken, Bot papa) {
         super();
         this.BOT_NAME = botName;
         this.BOT_TOKEN = botToken;
         this.PAPA = papa;
+        var mainBtnsList = createBtnsList( new String[]{"Завтраки","Супы","Напитки","Закуски","Салаты"});
+        mainKeyboardMarkup.setKeyboard(mainBtnsList);
+        var secondBtnsList = createBtnsList( new String[]{"Грузинская","Русская","Итальянская","Японская","Французская","Китайская"});
+        secondKeyboardMarkup.setKeyboard(secondBtnsList);
+
     }
 
     private String getUserName(Message msg) {
@@ -52,10 +65,28 @@ public final class TgBot extends TelegramLongPollingCommandBot
         SendMessage answer = new SendMessage();
         answer.setText(text);
         answer.setChatId(chatId.toString());
+        answer.setReplyMarkup(mainKeyboardMarkup);
         try {
             execute(answer);
         } catch (TelegramApiException e) {
-
+                e.printStackTrace();
         }
+    }
+
+    //Чтобы добавлять кнопки
+    private static InlineKeyboardButton createButton(String btnName, String callBackData){
+        InlineKeyboardButton btn = new InlineKeyboardButton();
+        btn.setText(btnName);
+        btn.setCallbackData(callBackData);
+        //добавить функционал
+        return btn;
+    }
+
+    private List<List<InlineKeyboardButton>> createBtnsList(String[] btns){
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        for(String btnName: btns){
+            keyboard.add(List.of(createButton(btnName, btnName)));
+        }
+        return keyboard;
     }
 }

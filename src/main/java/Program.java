@@ -23,7 +23,7 @@ public class Program {
         String token ="";
         try {
             Properties properties = new Properties();
-            properties.load(new FileInputStream("properties"));
+            properties.load(new FileInputStream("src/main/resources/properties.properties"));
             name = properties.getProperty("botName");
             token = properties.getProperty("botToken");
         }
