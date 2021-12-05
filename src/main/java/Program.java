@@ -5,28 +5,32 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+
 public class Program {
-
-
-    static String Name = "";
-    static String Token = "";
-
-
-    public static void main(String args[]) {
-
+    public static void main(String[] args) {
         var bot = new Bot();
-
         //new ConsoleBot(bot).runDialoge(); - консольный
-
         runTg(bot);
-
-
     }
 
 // TODO: Закинуть в другое место
-    public static void runTg(Bot bot) {
-
-        TgBot a = new TgBot(Name, Token, bot);
+    public static void runTg(Bot bot){
+        String name = "";
+        String token ="";
+        try {
+            Properties properties = new Properties();
+            properties.load(new FileInputStream("properties"));
+            name = properties.getProperty("botName");
+            token = properties.getProperty("botToken");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        TgBot a = new TgBot(name, token, bot);
         try {
             TelegramBotsApi botapi = new TelegramBotsApi(DefaultBotSession.class);
             botapi.registerBot(a);
