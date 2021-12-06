@@ -17,7 +17,7 @@ public class Program {
     public static void runTg(Bot bot){
 
         String name = "Kushac_2_bot";
-        String token = "5027205106:AAGz7uLY4nhtSZgfwKpZh2Mvg9LhisZ7T6k";
+        String token = "";
 
         TgBot a = new TgBot(name, token, bot);
         try {
