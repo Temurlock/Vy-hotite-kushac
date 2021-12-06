@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class SomeResponce {
 
-
+/*
     public static HashMap<String, String> dict_of_kuhnya = new HashMap<>() {
         {
             put("китайская", "kitayskaya-kuhnya");
@@ -24,20 +24,32 @@ public class SomeResponce {
             put("японская", "yaponskaya-kuhnya");
         }
     };
-
-    public static HashMap<String, String> dict_of_vid = new HashMap<>() {
+*/
+    public static HashMap<String, String> ingredient = new HashMap<>() {
         {
-            put("завтраки", "zavtraki");
-            put("закуски", "zakuski");
-            put("напитки", "napitki");
-            put("салаты", "salaty");
-            put("супы", "supy");
+            put("куриное яйцо", "zavtraki");
+            put("капуста", "zakuski");
+            put("морковь", "napitki");
+            put("тыква", "salaty");
+            put("кабачки", "supy");
+            put("сладкий перец", "supy");
+            put("свинина", "supy");
+            put("кислые яблоки", "supy");
+            put("сливы", "supy");
+            put("сладкие яблоки", "supy");
+            put("картофель", "supy");
+            put("рис", "supy");
+            put("макароны", "supy");
+            put("паста", "supy");
+            put("лапша", "supy");
+            put("баранина", "supy");
+            put("сыр", "supy");
         }
     };
 
     private static final String mainLink = "https://eda.ru";
 
-    public static String makeLink(String kuhnya, String vid) {
+    public static String makeLink(String kuhnya, String vid, String ingredient) {
 
         var link = "https://eda.ru/recepty";
         if (kuhnya != null) {
@@ -45,6 +57,9 @@ public class SomeResponce {
         }
         if (vid != null) {
             link += "/" + vid;
+        }
+        if (ingredient != null) {
+            link += "/" + ingredient;
         }
 
         return link;
@@ -88,7 +103,7 @@ public class SomeResponce {
 
         return String.join("\n", links);
     }
-
+/*
     public static String[] parseDishFromMessage(String text) {
 
         String cuisine;
@@ -114,4 +129,6 @@ public class SomeResponce {
 
         return new String[]{cuisine, vid};
     }
+
+ */
 }

@@ -23,7 +23,6 @@ public final class TgBot extends TelegramLongPollingCommandBot implements Sendab
     private InlineKeyboardMarkup mainKeyboardMarkup = new InlineKeyboardMarkup();
     private InlineKeyboardMarkup secondKeyboardMarkup = new InlineKeyboardMarkup();
 
-        //Завтраки, Супы, Напитки, Закуски
     public TgBot(String botName, String botToken, Bot papa) {
         super();
         this.BOT_NAME = botName;
@@ -59,7 +58,7 @@ public final class TgBot extends TelegramLongPollingCommandBot implements Sendab
     public String getBotUsername() {
         return BOT_NAME;
     }
-
+/*
     @Override
     public void send(Long chatId, String text) {
         SendMessage answer = new SendMessage();
@@ -71,7 +70,7 @@ public final class TgBot extends TelegramLongPollingCommandBot implements Sendab
         } catch (TelegramApiException e) {
                 e.printStackTrace();
         }
-    }
+    } */
 
     //Чтобы добавлять кнопки
     private static InlineKeyboardButton createButton(String btnName, String callBackData){
@@ -88,5 +87,47 @@ public final class TgBot extends TelegramLongPollingCommandBot implements Sendab
             keyboard.add(List.of(createButton(btnName, btnName)));
         }
         return keyboard;
+    }
+
+    @Override
+    public void onUpdateReceived(Update update, Long chatId, String text) {
+        String text1;
+        SendMessage answer = new SendMessage();
+        answer.setText(text);
+        answer.setChatId(chatId.toString());
+        if(update.hasMessage()){
+            if(update.getMessage().hasText()){
+                try {
+                    switch (update.getMessage().getText()) {
+                        case ("/help"):
+                            execute(new SendMessage().setChatId(chatId.toString()).setText("jijo"));
+                            break;
+                        case ("/start"):
+                            answer.setReplyMarkup(mainKeyboardMarkup);
+                            execute(answer);
+                            break;
+                        case ("Завтраки"):
+                        case ("Супы"):
+                        case ("Салаты"):
+                        case ("Напитки"):
+                        case ("Закуски"):
+                            answer.setReplyMarkup(secondKeyboardMarkup);
+                            execute(answer);
+                            break;
+
+
+                    }
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+            }
+        }else if(update.hasCallbackQuery()){
+            try {
+                execute(new SendMessage().setText(
+                                update.getCallbackQuery().getData())
+                        .setChatId(update.getCallbackQuery().getMessage().getChatId()));
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
