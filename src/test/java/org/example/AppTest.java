@@ -36,8 +36,8 @@ public class AppTest
     @Test
     public void testParseDishFromMessage() {
         var s = SomeResponce.parseDishFromMessage("менюююю японская грузинская грузинская рандомная завтраки");
-        assertEquals("yaponskaya-kuhnya", s[0]);
-        assertEquals("zavtraki", s[1]);
+        assertEquals("yaponskaya-kuhnya", s.poll());
+        assertEquals("zavtraki", s.poll());
     }
 
     @Test

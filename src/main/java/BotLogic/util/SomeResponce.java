@@ -1,9 +1,6 @@
 package BotLogic.util;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,8 +10,18 @@ import java.io.IOException;
 
 public class SomeResponce {
 
-/*
-    public static HashMap<String, String> dict_of_kuhnya = new HashMap<>() {
+    public static HashMap<String, String> dishType = new LinkedHashMap<>() {
+        {
+            put("завтраки", "zavtraki");
+            put("закуски", "zakuski");
+            put("напитки", "napitki");
+            put("салаты", "salaty");
+            put("супы", "supy");
+            put("skip", "null");
+        }
+    };
+
+    public static HashMap<String, String> cuisine = new LinkedHashMap<>() {
         {
             put("китайская", "kitayskaya-kuhnya");
             put("грузинская", "gruzinskaya-kuhnya");
@@ -22,46 +29,57 @@ public class SomeResponce {
             put("русская", "russkaya-kuhnya");
             put("французская", "francuzskaya-kuhnya");
             put("японская", "yaponskaya-kuhnya");
+            put("skip", "null");
         }
     };
-*/
-    public static HashMap<String, String> ingredient = new HashMap<>() {
+
+    public static HashMap<String, String> ingredient = new LinkedHashMap<>() {
         {
-            put("куриное яйцо", "zavtraki");
-            put("капуста", "zakuski");
-            put("морковь", "napitki");
+            put("яйцо", "13418");
+            put("капуста", "15096");
+            put("морковь", "13449");
             put("тыква", "13774");
             put("кабачки", "13539");
             put("сладкий перец", "13467");
             put("свинина", "13480");
             put("кислые яблоки", "15592");
-            put("сливы", "supy");
-            put("сладкие яблоки", "supy");
-            put("картофель", "supy");
-            put("рис", "supy");
-            put("макароны", "supy");
-            put("паста", "supy");
-            put("лапша", "supy");
-            put("баранина", "supy");
-            put("сыр", "supy");
+            put("сливы", "13762");
+            put("сладкие яблоки", "29900");
+            put("картофель", "13431");
+            put("рис", "13435");
+            put("макароны", "13484");
+            put("паста", "14380");
+            put("лапша", "13747");
+            put("баранина", "13470");
+            put("сыр", "13426");
+            put("end", "null");
         }
     };
 
     private static final String mainLink = "https://eda.ru";
 
-    public static String makeLink(String kuhnya, String vid, String ingredient) {
+    public static String makeLink(Queue<String> request) {
 
         var link = "https://eda.ru/recepty";
-        if (kuhnya != null) {
-            link += "/" + kuhnya;
+
+
+        if ("null".equals(request.peek())) {
+            link += "/" + request.peek();
         }
-        if (vid != null) {
-            link += "/" + vid;
+        request.poll();
+
+        if ("null".equals(request.peek())) {
+            link += "/" + request.peek();
         }
-        if (ingredient != null) {
-            link += "/" + ingredient;
+        request.poll();
+
+        if (!request.isEmpty()) {
+            link += "/ingredienty";
         }
 
+        while (!request.isEmpty()) {
+            link += "/" + request.poll();
+        }
         return link;
 
     }
@@ -98,37 +116,49 @@ public class SomeResponce {
 
         var attr = parseDishFromMessage(text);
         var links = findLinks(
-                makeLink(attr[0], attr[1])
+                makeLink(attr)
         );
 
         return String.join("\n", links);
     }
-/*
-    public static String[] parseDishFromMessage(String text) {
 
-        String cuisine;
-        String vid;
 
-        try {
-            cuisine = (String) Arrays.stream(text.split(" "))
-                    .distinct()
-                    .filter(dict_of_kuhnya::containsKey)
-                    .map(dict_of_kuhnya::get).toArray()[0];
-        } catch (IndexOutOfBoundsException e) {
-            cuisine = null;
-        }
+    public static Queue<String> parseDishFromMessage(String text) {
+
+
+        Queue<String> resultQueue = new ArrayDeque<>();
 
         try {
-            vid = (String) Arrays.stream(text.split(" "))
-                    .distinct()
-                    .filter(dict_of_vid::containsKey)
-                    .map(dict_of_vid::get).toArray()[0];
+            resultQueue.add(
+                    Arrays.stream(text.split(" "))
+                            .distinct()
+                            .filter(cuisine::containsKey)
+                            .map(cuisine::get).toArray(String[]::new)[0]
+            );
         } catch (IndexOutOfBoundsException e) {
-            vid = null;
+            resultQueue.add("null");
         }
 
-        return new String[]{cuisine, vid};
+
+        try {
+            resultQueue.add(
+                    Arrays.stream(text.split(" "))
+                            .distinct()
+                            .filter(dishType::containsKey)
+                            .map(dishType::get).toArray(String[]::new)[0]
+            );
+        } catch (IndexOutOfBoundsException e) {
+            resultQueue.add("null");
+        }
+
+
+        resultQueue.addAll(Arrays.stream(text.split(" "))
+                .distinct()
+                .filter(ingredient::containsKey)
+                .map(ingredient::get).toList()
+        );
+
+        return resultQueue;
     }
 
- */
 }
