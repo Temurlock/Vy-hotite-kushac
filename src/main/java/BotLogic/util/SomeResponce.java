@@ -40,11 +40,8 @@ public class SomeResponce {
             put("морковь", "13449");
             put("тыква", "13774");
             put("кабачки", "13539");
-            put("сладкий перец", "13467");
             put("свинина", "13480");
-            put("кислые яблоки", "15592");
             put("сливы", "13762");
-            put("сладкие яблоки", "29900");
             put("картофель", "13431");
             put("рис", "13435");
             put("макароны", "13484");
@@ -63,23 +60,24 @@ public class SomeResponce {
         var link = "https://eda.ru/recepty";
 
 
-        if ("null".equals(request.peek())) {
+        if (!"null".equals(request.peek())) {
             link += "/" + request.peek();
         }
         request.poll();
 
-        if ("null".equals(request.peek())) {
+        if (!"null".equals(request.peek())) {
             link += "/" + request.peek();
         }
         request.poll();
 
-        if (!request.isEmpty()) {
+        if (!"null".equals(request.peek())) {
             link += "/ingredienty";
         }
 
-        while (!request.isEmpty()) {
+        while (!request.isEmpty() && !"null".equals(request.peek())) {
             link += "/" + request.poll();
         }
+        System.out.println(link);
         return link;
 
     }

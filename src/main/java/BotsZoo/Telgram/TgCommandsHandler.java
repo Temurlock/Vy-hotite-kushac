@@ -76,6 +76,7 @@ public class TgCommandsHandler {
     public void sendDishes(CallbackQuery callbackQuery, String line) {
 
         var s = SomeResponce.getTextDishes(line);
+
         bot.send(
                 callbackQuery.getMessage().getChatId(), s
         );
