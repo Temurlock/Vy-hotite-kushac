@@ -1,12 +1,26 @@
 package BotsZoo.Telgram;
 
+import BotLogic.DTO.Dishes;
 import BotLogic.util.MainBotStrings;
 import BotLogic.util.SomeResponce;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TgCommandsHandler {
 
@@ -35,12 +49,12 @@ public class TgCommandsHandler {
         switch (stage) {
             case "1":
                 var temp = callback.getData()
-                          + "\n2.Выберете вид блюда";
+                          + "\n2.Выберите вид блюда";
                 changeCallbackMessage(update, temp, KushacEvent.dishType);
                 break;
             case "2":
                 temp = text.split("\n")[0] + " "
-                        + callback.getData() + "\n3.Выберете подходящий ингридиент";
+                        + callback.getData() + "\n3.Выберите подходящий ингредиент";
                 changeCallbackMessage(update, temp, KushacEvent.ingredient);
                 break;
             case "3":
@@ -50,7 +64,7 @@ public class TgCommandsHandler {
                     break;
                 }
                 temp = text.split("\n")[0] + " "
-                        + callback.getData() + "\n3.Выберете подходящий ингридиент";
+                        + callback.getData() + "\n3.Выберите подходящий ингредиент";
                 changeCallbackMessage(update, temp, KushacEvent.ingredient);
                 break;
         }
@@ -76,9 +90,38 @@ public class TgCommandsHandler {
     public void sendDishes(CallbackQuery callbackQuery, String line) {
 
         var s = SomeResponce.getTextDishes(line);
-
-        bot.send(
-                callbackQuery.getMessage().getChatId(), s
+        List<String> urlList = List.of(s.split("\\n"));
+        parseDishesUrlToDishes(urlList.get(0));
+        urlList.parallelStream().forEach(url -> bot.send(
+                callbackQuery.getMessage().getChatId(),
+                parseDishesUrlToDishes(url).toString())
         );
+
+        //bot.send(callbackQuery.getMessage().getChatId(), s);
+    }
+
+    public Dishes parseDishesUrlToDishes(String dishesUrl){
+        try {
+            Document document = Jsoup.connect(dishesUrl).get();
+            String name = "";
+            String imageUrl = "";
+            HashMap<String, String> energyValues = new HashMap<>();
+            List<String> components = new ArrayList<>();
+            name = document.select("[itemprop=name]").text();
+            document.select("[itemprop=recipeIngredient]").
+                    forEach( item -> components.add(item.text()));
+            imageUrl =  document.select("[alt=Изображение материала]")
+                    .first()
+                    .attr("src");
+            Elements elements = document.select("[itemprop]");
+            energyValues.put("Калории", elements.select("[itemprop=calories]").text());
+            energyValues.put("Белки", elements.select("[itemprop=proteinContent]").text());
+            energyValues.put("Жиры", elements.select("[itemprop=fatContent]").text());
+            energyValues.put("Углеводы", elements.select("[itemprop=carbohydrateContent]").text());
+            return new Dishes(name,energyValues,imageUrl,components, dishesUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

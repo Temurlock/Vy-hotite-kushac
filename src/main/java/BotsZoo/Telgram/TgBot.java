@@ -71,6 +71,7 @@ public final class TgBot extends TelegramLongPollingBot  implements Sendable {
         SendMessage answer = new SendMessage();
         answer.setText(text);
         answer.setChatId(chatId.toString());
+        answer.enableHtml(true);
         try {
             execute(answer);
         } catch (TelegramApiException e) {
